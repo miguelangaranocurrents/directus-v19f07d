@@ -44,3 +44,8 @@
 		fill: var(--tooltip-background-color);
 	}
 }
+
+// The force-mounted tooltip stays in the DOM (invisible) after closing; keep its positioning wrapper from catching clicks
+[data-reka-popper-content-wrapper]:has(> .tooltip) {
+	pointer-events: none;
+}

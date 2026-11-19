@@ -332,7 +332,14 @@ function useFileUpload() {
 			notificationsStore.remove(dragNotificationID);
 		}
 
-		const files = Array.from(event.dataTransfer.files).filter((file) => file.type);
+		// Skip dropped directories, but keep files the browser has no mime type for
+		const directoryIndexes = new Set<number>();
+
+		Array.from(event.dataTransfer.items ?? []).forEach((item, index) => {
+			if (item.kind === 'file' && item.webkitGetAsEntry?.()?.isDirectory) directoryIndexes.add(index);
+		});
+
+		const files = Array.from(event.dataTransfer.files).filter((_, index) => !directoryIndexes.has(index));
 
 		fileUploadNotificationID = notificationsStore.add({
 			title: t(
